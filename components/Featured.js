@@ -29,7 +29,7 @@ const ColumnsWrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     gap: 40px;
-    img.name{
+    img.main{
         max-width: 100%;
         max-height: 200px;
         display: block;
@@ -72,7 +72,7 @@ export default function Featured({product}) {
                                 <Desc>{product.description}</Desc>
                                 <ButtonsWrapper >
                                     <ButtonLink href={'/products/'+product._id} outline={1} white={1}>Read more</ButtonLink>
-                                    <FlyingButton white _id={product._id} src={product.images?.[0]}>
+                                    <FlyingButton white={1} _id={product._id} src={product.images?.[0]}>
                                         <CartIcon></CartIcon>Add to cart
                                     </FlyingButton>
                                 </ButtonsWrapper>

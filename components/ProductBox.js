@@ -3,8 +3,13 @@ import Button, { ButtonStyle } from "./Button";
 import CartIcon from "./icons/CartIcon";
 import Link from "next/link";
 import FlyingButton from "./FlyingButton";
-const ProductWrapper = styled.div`
 
+const ProductWrapper = styled.div`
+    button{
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
 `;
 
 const WhiteBox = styled(Link)`
