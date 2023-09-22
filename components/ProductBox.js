@@ -3,6 +3,10 @@ import Button, { ButtonStyle } from "./Button";
 import CartIcon from "./icons/CartIcon";
 import Link from "next/link";
 import FlyingButton from "./FlyingButton";
+import HeartOutlineIcon from "./icons/HeartOtline";
+import HeartSolidIcon from "./icons/HeartSolidIcon";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const ProductWrapper = styled.div`
     button{
@@ -21,6 +25,7 @@ const WhiteBox = styled(Link)`
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    position: relative;
     img{
         max-width: 100%;
         max-height: 80px;
@@ -61,14 +66,52 @@ const Price = styled.div`
     }
 `;
 
+const WishlistButton = styled.button`
+    border: 0;
+    width: 40px !important;
+    height: 30px;
+    position: absolute;
+    padding: 10px;
+    top: 0;
+    right: 0;
+    background: transparent;
+    cursor: pointer;
+    ${props => props.wished ? `
+        color: red;
+    ` : `
+        color: black;
+    `}
+    svg{
+        width: 16px;
+    }
+`;
 
-
-export default function ProductBox({_id,title,decription,price,images}){
+export default function ProductBox({_id,title,decription,price,images, wished=false, 
+    onRemoveFromWishList=()=>{},    
+}){
     const uri = '/product/'+_id;
+
+    const [isWished, setIsWished] = useState(wished);
+
+    function addToWishList(ev){
+        ev.preventDefault();
+        const nextValue = !isWished;
+        if(nextValue === false){
+            onRemoveFromWishList(_id);
+        }
+        axios.post('/api/wishlist', {
+            product: _id,
+        }).then(() => {});
+        setIsWished(nextValue);
+    }
+
     return (
         <ProductWrapper>
             <WhiteBox href={uri}>
                 <div>
+                    <WishlistButton wished={isWished} onClick={addToWishList}>
+                        {isWished ? <HeartSolidIcon></HeartSolidIcon> : <HeartOutlineIcon></HeartOutlineIcon>}
+                    </WishlistButton>
                     <img src={images?.[0]}></img>
                 </div>
             </WhiteBox>
