@@ -9,7 +9,7 @@ export default async function handle(req,res){
     const productsQuery = {};
 
     if(categories){
-        productsQuery.category = categories.split('');
+        productsQuery.category = categories.split(',');
     }
 
     if(phrase){
