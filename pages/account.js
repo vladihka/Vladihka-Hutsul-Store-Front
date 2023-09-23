@@ -2,8 +2,10 @@ import Button from "@/components/Button";
 import Center from "@/components/Center";
 import Header from "@/components/Header";
 import Input from "@/components/Input";
+import SingleOrder from "@/components/SingleOrder";
 import ProductBox from "@/components/ProductBox";
 import Spinner from "@/components/Spinner";
+import Tabs from "@/components/Tabs";
 import WhiteBox from "@/components/WhiteBox";
 import axios from "axios";
 import {useSession, signOut, signIn} from "next-auth/react";
@@ -43,6 +45,9 @@ export default function AccountPage(){
     const [addressLoaded,setAddressLoaded] = useState(true);
     const [wishListLoaded,setWishListLoaded] = useState(true);
     const [wishedProducts, setWishedProducts] = useState([]);
+    const [activeTab, setActiveTab] = useState('Orders');
+    const [orders, setOrders] = useState([]);
+    const [orderLoaded, setOrderLoaded] = useState(true);
     async function logout(){
         await signOut({
             callbackUrl: process.env.NEXT_PUBLIC_URL,
@@ -64,6 +69,7 @@ export default function AccountPage(){
         }
         setWishListLoaded(false);
         setWishListLoaded(false);
+        setOrderLoaded(false);
         axios.get('/api/address').then(response => {
         setName(response.data.name);
         setEmail(response.data.email);
@@ -76,6 +82,10 @@ export default function AccountPage(){
         axios.get('/api/wishlist').then(response => {
             setWishedProducts(response.data.map(wp => wp.product));
             setWishListLoaded(true);
+        });
+        axios.get('/api/orders').then(response => {
+            setOrders(response.data);
+            setOrderLoaded(true);
         })
     }, [session]);
     
@@ -93,31 +103,55 @@ export default function AccountPage(){
                     <div>
                         <RevealWrapper delay={0}>
                             <WhiteBox>
-                                <h2>Wishlist</h2>
-                                {!wishListLoaded && (
-                                    <Spinner fullWidth={true}></Spinner>
-                                )}
-                                {wishListLoaded && (
+                                <Tabs 
+                                    tabs={['Orders','Wishlist']} 
+                                    active={activeTab} 
+                                    onChange={setActiveTab}>
+                                </Tabs>
+                                {activeTab === 'Orders' && (
                                     <>
-                                    <WishedProductGrid>
-                                        {wishedProducts.length > 0 && wishedProducts.map(wp => (
-                                            <ProductBox key={wp._id} {...wp} wished={true} 
-                                                        onRemoveFromWishList={productRemovedFromWishList}>
-                                            </ProductBox>
-                                        ))}     
-                                    </WishedProductGrid>
-                                    {wishedProducts.length === 0 && (
-                                            <>
-                                                {session && (
-                                                    <p>Your wishlist is empty</p>
+                                        {!orderLoaded && (
+                                            <Spinner fullWidth={true}></Spinner>
+                                        )}
+                                        {orderLoaded && (
+                                            <div>
+                                                {orders.length === 0 && (
+                                                    <p>Login to see your orders</p>
                                                 )}
-                                                {!session && (
-                                                    <p>Login to add products to your wishlist</p>
+                                                {orders.length > 0 && orders.map(o => (
+                                                    <SingleOrder {...o}></SingleOrder>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                                {activeTab === 'Wishlist' && (
+                                    <>
+                                        {!wishListLoaded && (
+                                            <Spinner fullWidth={true}></Spinner>
+                                        )}
+                                        {wishListLoaded && (
+                                            <>
+                                            <WishedProductGrid>
+                                                {wishedProducts.length > 0 && wishedProducts.map(wp => (
+                                                    <ProductBox key={wp._id} {...wp} wished={true} 
+                                                                onRemoveFromWishList={productRemovedFromWishList}>
+                                                    </ProductBox>
+                                                ))}     
+                                            </WishedProductGrid>
+                                            {wishedProducts.length === 0 && (
+                                                    <>
+                                                        {session && (
+                                                            <p>Your wishlist is empty</p>
+                                                        )}
+                                                        {!session && (
+                                                            <p>Login to add products to your wishlist</p>
+                                                        )}
+                                                    </>
                                                 )}
                                             </>
                                         )}
                                     </>
-                                    
                                 )}
                             </WhiteBox>
                         </RevealWrapper>
