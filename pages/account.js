@@ -14,13 +14,18 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const ColsWrapper = styled.div`
-    display: grid;
-    grid-template-columns: 1.2fr .8fr;
-    gap: 40px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 20px;
     margin: 40px 0;
     p{
         margin: 5px;
     }
+    @media screen and (min-width: 768px){
+        display: grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap: 40px;
+    }  
 `;
 
 const CityHolder = styled.div`
